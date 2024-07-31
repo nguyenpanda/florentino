@@ -1,0 +1,12 @@
+pip
+numpy>=2.0.1
+nguyenpanda>=0.1.8
+IPython
+jupyter
+matplotlib
+pathlib
+pandas
+seaborn
+scikit-learn
+PIL
+pytest
