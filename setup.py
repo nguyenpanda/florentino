@@ -59,7 +59,7 @@ class Publish(Command):
         subprocess.run([PY_CMD, '-m', 'pip', 'install', '--upgrade', 'pip', 'build', 'twine'], check=True)
         subprocess.run([PY_CMD, 'setup.py', 'sdist', 'bdist_wheel'], check=True)
         print(self.description)
-        subprocess.run([PY_CMD, '-m', 'twine', 'upload', '--repository', 'dist/*'], check=True)
+        subprocess.run([PY_CMD, '-m', 'twine', 'upload','--repository', 'pypi', 'dist/*'], check=True)
         print(self.description)
 
 
