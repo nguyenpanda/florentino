@@ -50,7 +50,7 @@ for submodule in flo.__all__:
     exec(f'from florentino import {submodule} as submodule')
     print(magenta + submodule.__name__ + reset)
     for class_name in submodule.__all__:
-        print(f'\\t - {class_name}')
+        print(f'\t - {class_name}')
     del submodule
 print(yellow + 50 * '=' + reset)
 "

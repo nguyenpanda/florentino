@@ -8,5 +8,5 @@ pathlib
 pandas
 seaborn
 scikit-learn
-PIL
+pillow
 pytest
