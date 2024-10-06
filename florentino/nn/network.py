@@ -137,8 +137,8 @@ class Network:
         print(f"| {str('Loss function: ') + str(self.loss):>40} || {str('Network type: ') + network_type:>40} |")
         print('=' * row_len)
 
-    @staticmethod
-    def load(directory: str | pathlib.Path, loss_func: Loss):
+    @classmethod
+    def load(cls, directory: str | pathlib.Path, loss_func: Loss):
         directory_path = pathlib.Path(directory) if isinstance(directory, str) else directory
 
         files = sorted([file for file in list(os.listdir(directory_path)) if file.endswith('.npy')])
@@ -155,15 +155,15 @@ class Network:
         check_missing = 1
         sequential = []
         for i, token in enumerate(tokens):
-            b = token[0]
-            w = token[1]
+            b, w = token
             data = datas[i]
+            data_b, data_w = data
+            nodes, pre_nodes = data_w.shape
 
             if check_missing != int(b[0]):
                 raise ValueError(f'Missing parameter b of layer {check_missing}')
             if check_missing != int(w[0]):
                 raise ValueError(f'Missing parameter w of layer {check_missing}')
-            check_missing += 1
 
             if b[1] != 'b':
                 raise ValueError(f'Invalid parameter type: {b[1]}')
@@ -171,10 +171,6 @@ class Network:
                 raise ValueError(f'Invalid parameter type: {w[1]}')
             if b[2] != w[2]:
                 raise ValueError(f'Invalid layer type: {b[2]}')
-
-            data_b = data[0]
-            data_w = data[1]
-            nodes, pre_nodes = data_w.shape
             if data_b.shape[0] != data_w.shape[0]:
                 raise ValueError(f'Invalid shape of data: {data_b.shape} and {data_w.shape}')
 
@@ -182,15 +178,17 @@ class Network:
                 if b[3] != w[3]:
                     raise ValueError(f'Invalid activation function: {b[3]}')
                 temp = Dense(nodes, pre_nodes, activation=b[3])
-                temp.b = data_b
-                temp.w = data_w
-                sequential.append(temp)
             elif b[2] == 'Softmax':
                 temp = Softmax(nodes, pre_nodes)
-                temp.b = data_b
-                temp.w = data_w
-                sequential.append(temp)
-        return Network(sequential, loss_func)
+            else:
+                raise ValueError(f'Can\'t recognize `{b[2]}` layer')
+
+            temp.b = data_b  # This can be optimized by directed initial b in Layer
+            temp.w = data_w  # This can be optimized by directed initial w in Layer
+            sequential.append(temp)
+            check_missing += 1
+
+        return cls(sequential, loss_func)
 
     def save(self, directory_name: str, exist_ok=False):
         direct_path = pathlib.Path(directory_name)
