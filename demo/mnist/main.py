@@ -60,6 +60,9 @@ class DrawApp:
         self.old_x = x
         self.old_y = y
 
+        self.predict_digit()
+        self.display_prediction()
+
     def reset_drawing(self, event):
         self.old_x = None
         self.old_y = None
